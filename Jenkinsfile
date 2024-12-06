@@ -75,7 +75,7 @@ print("Object detection script is running!")
 
     post {
         always {
-            node('master') { // Specify the agent label here
+            node {
                 echo 'Cleaning up workspace...'
                 sh 'rm -rf venv Output'
             }
