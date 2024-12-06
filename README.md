@@ -22,7 +22,7 @@ datetime: For generating unique filenames.
 roboflow: For animal classification via Roboflow API.  
 threading: For running tasks without freezing the GUI.    
   
-Installation: 
+Installation:   
 Python: Ensure you have Python 3.8 or later installed. You can download it from python.org.  
 Install Required Libraries: Run the following command to install the necessary libraries:  
 pip install opencv-python-headless pillow matplotlib ultralytics roboflow  
@@ -50,9 +50,9 @@ For videos: The application processes the video frame-by-frame, showing progress
 Output Files:  
 Cropped animal detections are saved in the Output/Detected_Animals directory.  
 Processed images with annotations are saved in the Output/Classified_Animals directory.  
+Processed videos with annotations are saved in the Output/Processed_Videos.    
   
-Directory Structure  
-  
+Directory Structure    
 app.py                  # Main Python script  
 yolo11m.pt              # YOLOv11 model file  
 Output  
