@@ -2,8 +2,8 @@ pipeline {
     agent any
 
     environment {
-        // Roboflow API key and project details from the provided Python code
-        ROBOFLOW_API_KEY = "7P6wSkFD6Zb39ZYTL84S"  
+        // Roboflow API key and project details
+        ROBOFLOW_API_KEY = "7P6wSkFD6Zb39ZYTL84S"
         WORKSPACE_NAME = "animal-class"
         PROJECT_NAME = "animal-class-cnxhg"
         MODEL_VERSION = "5"
@@ -14,7 +14,6 @@ pipeline {
         stage('Setup Workspace') {
             steps {
                 echo 'Cleaning up and setting up workspace...'
-                // Clean and prepare output directories
                 sh '''
                 rm -rf Output
                 mkdir -p Output/Detected_Animals
@@ -27,7 +26,6 @@ pipeline {
         stage('Setup Python Environment') {
             steps {
                 echo 'Setting up Python virtual environment and installing dependencies...'
-                // Set up Python virtual environment and install libraries
                 sh '''
                 python3 -m venv venv
                 source venv/bin/activate
@@ -40,7 +38,6 @@ pipeline {
         stage('Run Object Detection Script') {
             steps {
                 echo 'Running the Python object detection and classification script...'
-                // Save the Python code into a script file
                 writeFile file: 'main.py', text: '''
 import os
 import cv2
@@ -54,26 +51,13 @@ from PIL import Image, ImageTk
 import threading
 
 # Initialize YOLOv11 and Roboflow models
-model = YOLO("${YOLO_MODEL}")  # Use YOLOv11 model
-rf = Roboflow(api_key="${ROBOFLOW_API_KEY}")  # Private API Key
-project = rf.workspace("${WORKSPACE_NAME}").project("${PROJECT_NAME}")  # Workspace and Project Name
-rf_model = project.version(${MODEL_VERSION}).model  # Use specified version of the model
+model = YOLO("${YOLO_MODEL}")
+rf = Roboflow(api_key="${ROBOFLOW_API_KEY}")
+project = rf.workspace("${WORKSPACE_NAME}").project("${PROJECT_NAME}")
+rf_model = project.version(${MODEL_VERSION}).model
 
-# Set up output directories
-output_dir_detected = "Output/Detected_Animals"
-output_dir_classified = "Output/Classified_Animals"
-output_dir_processed_video = "Output/Processed_Videos"
-
-os.makedirs(output_dir_detected, exist_ok=True)
-os.makedirs(output_dir_classified, exist_ok=True)
-os.makedirs(output_dir_processed_video, exist_ok=True)
-
-# Main function here would go (truncated for simplicity)
-
-if __name__ == "__main__":
-    print("Object detection script is running!")
+print("Object detection script is running!")
                 '''
-                // Execute the script
                 sh '''
                 source venv/bin/activate
                 python main.py
@@ -84,7 +68,6 @@ if __name__ == "__main__":
         stage('Archive Results') {
             steps {
                 echo 'Archiving output results...'
-                // Archive all output files
                 archiveArtifacts artifacts: 'Output/**/*', allowEmptyArchive: true
             }
         }
@@ -92,7 +75,7 @@ if __name__ == "__main__":
 
     post {
         always {
-            node {
+            node('master') { // Specify the agent label here
                 echo 'Cleaning up workspace...'
                 sh 'rm -rf venv Output'
             }
